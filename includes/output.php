@@ -449,7 +449,7 @@ function print_footer() {
 function print_select($name, $list, $index, $index_desc, $selected = NULL, $enabled = 1) {
 	$numOfElements = count($list);
 	?>
-	<select name="<?php echo $name;?>" <?php if(!$enabled) print("DISABLED");?>>
+	<select id="my_select" name="<?php echo $name;?>" <?php if(!$enabled) print("DISABLED");?>>
 		<?php
 		for($counter = 0; $counter < $numOfElements; $counter++) {
 			?>

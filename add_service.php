@@ -302,7 +302,14 @@ print_window_header("Add Service " . $title, "100%");
 			}
 			form_select_element_with_enabler($command_list, "command_id", "command_name", "service_template_add_form", "check_command", "Check Command", $lilac->element_desc("check_command", "nagios_services_desc"), null);
 			?>
-		<br />
+			<input type="text" id="textdisabled" value="Select a command" disabled="" style=" min-width: 70%;"><br />
+			<br />
+			<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
+				<tr class="altTop">
+				<td colspan="2">Help for the command:</td>
+				</tr></table>
+			<textarea id="textareadisabled" rows="10" cols="110" readonly> Select a command to get help </textarea><br />
+			<br />
 		</td>	
 	</tr>
 	<tr bgcolor="eeeeee">
@@ -341,6 +348,46 @@ print_window_header("Add Service " . $title, "100%");
 		$.post("add_service_ajax.php", params, result, "html");
 	}
 
+	$("#my_select").change(function() {
+	  var id = $(this).children(":selected").attr("value");
+
+
+		function showGetResult( id )
+		{
+				 var result = null;
+				 var scriptUrl = "gets-ajax.php?action=line&id=" + id;
+				 $.ajax({
+						url: scriptUrl,
+						type: 'get',
+						dataType: 'html',
+						async: false,
+						success: function(data) {
+								result = data;
+						}
+				 });
+				 return result;
+		}
+		function showGetResult2( id )
+		{
+				 var result2 = null;
+				 var scriptUrl2 = "gets-ajax.php?action=help&id=" + id;
+				 $.ajax({
+						url: scriptUrl2,
+						type: 'get',
+						dataType: 'html',
+						async: false,
+						success: function(data) {
+								result = data;
+						}
+				 });
+				 return result;
+		}
+
+		document.getElementById("textdisabled").value = showGetResult(id);
+
+		document.getElementById("textareadisabled").innerHTML = showGetResult2(id);
+	});
+	
 	function result(datas){
 		data = datas.split(";;");
 		$("#output").html(data[0]);

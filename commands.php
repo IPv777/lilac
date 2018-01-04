@@ -23,6 +23,14 @@ Lilac Index Page, Displays Menu, and Statistics
 */
 include_once('includes/config.inc');
 
+//-------------- A supprimer quand géré avec propel -------------------
+include("includes/lilac-conf.php");
+$dsn = $conf['datasources']['lilac']['connection']['dsn'];
+$dbuser = $conf['datasources']['lilac']['connection']['user'];
+$dbpassword = $conf['datasources']['lilac']['connection']['password'];
+$bdd = new PDO($dsn, $dbuser, $dbpassword);
+//---------------------------------------------------------------------
+
 // EoN_Actions
 EoN_Actions_Process("Command");
 
@@ -60,9 +68,14 @@ if(isset($_POST['request'])) {
 				$error = "A command with that name already exists!";
 				$_GET['command_add'] = 1;
 			}
-			else {
+			else {			
 				// All is well for error checking, add the command into the db.
 				$lilac->add_command($_POST['command_manage']);
+				
+				//-------------- A modifier pour géré avec propel -------------------
+				$bdd->query("UPDATE nagios_command SET help = '".$_POST['command_man_help']."' WHERE id = '".$_GET['command_id']."'");
+				//-------------------------------------------------------------------
+				
 				// Remove session data
 				unset($command);
 				$success = "Command added.";
@@ -88,6 +101,11 @@ if(isset($_POST['request'])) {
 			// All is well for error checking, modify the command.
 			$command->updateFromArray($_POST['command_manage']);
 			$command->save();
+			
+			//-------------- A modifier pour géré avec propel -------------------
+			$bdd->query("UPDATE nagios_command SET help = '".$_POST['command_man_help']."' WHERE id = '".$_GET['command_id']."'");
+			//-------------------------------------------------------------------
+			
 			$success = "Command modified.";
 			unset($command);
 		}
@@ -103,6 +121,12 @@ print_header("Nagios Command Editor");
 <?php
 	if(isset($command) || isset($_GET['command_add'])) {
 		if(isset($command)) {
+			//-------------- A modifier pour géré avec propel -------------------
+			$sql = $bdd->query("SELECT * FROM nagios_command WHERE id = ".$_GET['command_id']."");
+			$sql->setFetchMode(PDO::FETCH_BOTH);// Mode par défaut (tableau)
+			$help = $sql->fetch();
+			//-------------------------------------------------------------------
+			
 			print_window_header("Modify A Command", "100%");
 			?>		<form name="command_form" method="post" action="commands.php?command_id=<?php echo $command->getId();?>"><?php
 			
@@ -139,6 +163,15 @@ print_header("Nagios Command Editor");
 			<?php echo $lilac->element_desc("command_desc", "nagios_commands_desc"); ?><br />
 			<br />		
 			<br />
+			
+			<?php // -------------- A modifier pour géré avec propel -------------------?>
+			<b>Command Help:</b><br />
+			<textarea name="command_man_help" rows="10" cols="50"><?php echo isset($command) ? $help['help']: ''; ?></textarea>
+			<?php echo $lilac->element_desc("command_help", "nagios_commands_help"); ?><br />
+			<br />
+			<br />
+			<?php // -------------------------------------------------------------------?>
+			
 			<?php 
 				if(isset($command)) {
 					?>
