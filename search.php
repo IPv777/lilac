@@ -66,7 +66,7 @@ class module_search_simple {
 		
 		$this->searchTemplate = array();
 		
-		$this->searchTemplate['hosts'] = array( "type"=>"Hosts", "getName"=>"Host Name", "getAddress"=>"IP Address", "getAlias"=>"Alias");
+		$this->searchTemplate['hosts'] = array( "type"=>"Hosts", "getName"=>"Host Name", "getAddress"=>"IP Address", "getAlias"=>"Description");
 		$this->searchTemplate['hostgroups'] = array( "type"=>"Hostgroups", "getName"=>"Hostgroup Name", "getAlias"=>"Alias");
 		$this->searchTemplate['host_templates'] = array( "type"=>"Host Templates", "getName"=>"Template Name", "getDescription"=>"Description");
 		$this->searchTemplate['services'] = array( "type"=>"Services", "getDescription"=>"Service", "getOwnerDescription"=>"Owner Description");
